@@ -1,5 +1,7 @@
-package br.com.leofarage.clk.challenge;
+package br.com.leofarage.ckl.challenge.activities;
 
+import br.com.leofarage.ckl.challenge.fragments.ArticleDetailFragment;
+import br.com.leofarage.clk.challenge.R;
 import android.content.Intent;
 import android.os.Bundle;
 import android.app.Activity;

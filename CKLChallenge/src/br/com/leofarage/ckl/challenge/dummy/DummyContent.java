@@ -1,4 +1,4 @@
-package br.com.leofarage.clk.challenge.dummy;
+package br.com.leofarage.ckl.challenge.dummy;
 
 import java.util.ArrayList;
 import java.util.HashMap;

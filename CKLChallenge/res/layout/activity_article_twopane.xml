@@ -8,7 +8,7 @@
     android:divider="?android:attr/dividerHorizontal"
     android:orientation="horizontal"
     android:showDividers="middle"
-    tools:context="br.com.leofarage.clk.challenge.ArticleListActivity" >
+    tools:context="br.com.leofarage.ckl.challenge.activities.ArticleListActivity" >
 
     <!--
     This layout is a two-pane layout for the Articles
@@ -23,7 +23,7 @@
 
     <fragment
         android:id="@+id/article_list"
-        android:name="br.com.leofarage.clk.challenge.ArticleListFragment"
+        android:name="br.com.leofarage.ckl.challenge.fragments.ArticleListFragment"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"

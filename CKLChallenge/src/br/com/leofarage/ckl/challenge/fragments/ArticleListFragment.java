@@ -1,22 +1,18 @@
-package br.com.leofarage.clk.challenge;
+package br.com.leofarage.ckl.challenge.fragments;
 
 import android.app.Activity;
 import android.os.Bundle;
 import android.app.ListFragment;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-import br.com.leofarage.clk.challenge.dummy.DummyContent;
+import br.com.leofarage.ckl.challenge.dummy.DummyContent;
 
 /**
- * A list fragment representing a list of Articles. This fragment also supports
- * tablet devices by allowing list items to be given an 'activated' state upon
- * selection. This helps indicate which item is currently being viewed in a
- * {@link ArticleDetailFragment}.
- * <p>
- * Activities containing this fragment MUST implement the {@link Callbacks}
- * interface.
+
  */
 public class ArticleListFragment extends ListFragment {
 
@@ -74,6 +70,8 @@ public class ArticleListFragment extends ListFragment {
 		setListAdapter(new ArrayAdapter<DummyContent.DummyItem>(getActivity(),
 				android.R.layout.simple_list_item_activated_1,
 				android.R.id.text1, DummyContent.ITEMS));
+		
+		setHasOptionsMenu(true);
 	}
 
 	@Override
@@ -94,13 +92,17 @@ public class ArticleListFragment extends ListFragment {
 
 		// Activities containing this fragment must implement its callbacks.
 		if (!(activity instanceof Callbacks)) {
-			throw new IllegalStateException(
-					"Activity must implement fragment's callbacks.");
+			throw new IllegalStateException("Activity must implement fragment's callbacks.");
 		}
 
 		mCallbacks = (Callbacks) activity;
 	}
 
+	@Override
+	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+		super.onCreateOptionsMenu(menu, inflater);
+	}
+	
 	@Override
 	public void onDetach() {
 		super.onDetach();

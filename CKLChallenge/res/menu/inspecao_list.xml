@@ -1,0 +1,17 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="br.ufsc.incod.anvisa.hemoterapia.guia.mobile.LoginActivity" >
+
+    <item
+        android:id="@+id/action_sync"
+        android:orderInCategory="100"
+        android:showAsAction="always"
+        android:title="Download new articles"/>
+    
+    <item
+        android:id="@+id/action_send"
+        android:orderInCategory="100"
+        android:showAsAction="always"
+        android:title="Enviar Inspeções"/>
+
+</menu>

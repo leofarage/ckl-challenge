@@ -1,4 +1,7 @@
 package br.com.leofarage.ckl.challenge.DAO.generator;
+import java.io.IOException;
+
+import de.greenrobot.daogenerator.DaoGenerator;
 import de.greenrobot.daogenerator.Entity;
 import de.greenrobot.daogenerator.Property;
 import de.greenrobot.daogenerator.Schema;
@@ -28,14 +31,28 @@ public class CKL_DAOGenerator {
 			article.addStringProperty("website");
 			article.addStringProperty("title");
 			article.addDateProperty("date");
-			
-		authors = schema.addEntity("Authors");
-			authors.addIdProperty();
-			Property articleId = authors.addLongProperty("idArticle").notNull().getProperty();
-			authors.addStringProperty("name").notNull();
-			
-		authors.addToOne(article, articleId);
+			article.addStringProperty("authors");
 		
+		extracted(schema);
+		
+	}
+	
+	private static void extracted(Schema schema) {
+		DaoGenerator daoGenerator;
+		try {
+			daoGenerator = new DaoGenerator();
+			daoGenerator.generateAll(schema, "../CKLChallenge/src");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch(NoClassDefFoundError e){
+			e.printStackTrace();
+		} catch (ClassNotFoundException e){
+			e.printStackTrace();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 }

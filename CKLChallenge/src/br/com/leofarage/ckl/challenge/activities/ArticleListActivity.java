@@ -1,34 +1,28 @@
-package br.com.leofarage.clk.challenge;
+package br.com.leofarage.ckl.challenge.activities;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import br.com.leofarage.ckl.challenge.fragments.ArticleDetailFragment;
+import br.com.leofarage.ckl.challenge.fragments.ArticleListFragment;
+import br.com.leofarage.ckl.challenge.fragments.ArticleListFragment.Callbacks;
+import br.com.leofarage.clk.challenge.R;
 import android.content.Intent;
 import android.os.Bundle;
 import android.app.Activity;
 
 /**
- * An activity representing a list of Articles. This activity has different
- * presentations for handset and tablet-size devices. On handsets, the activity
- * presents a list of items, which when touched, lead to a
- * {@link ArticleDetailActivity} representing item details. On tablets, the
- * activity presents the list of items and item details side-by-side using two
- * vertical panes.
- * <p>
- * The activity makes heavy use of fragments. The list of items is a
- * {@link ArticleListFragment} and the item details (if present) is a
- * {@link ArticleDetailFragment}.
- * <p>
- * This activity also implements the required
- * {@link ArticleListFragment.Callbacks} interface to listen for item
- * selections.
+
  */
-public class ArticleListActivity extends Activity implements
-		ArticleListFragment.Callbacks {
+public class ArticleListActivity extends Activity implements ArticleListFragment.Callbacks {
 
 	/**
 	 * Whether or not the activity is in two-pane mode, i.e. running on a tablet
 	 * device.
 	 */
 	private boolean mTwoPane;
-
+	private List<ArticleListFragment> fragmentsBuffer;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -40,11 +34,11 @@ public class ArticleListActivity extends Activity implements
 			// res/values-sw600dp). If this view is present, then the
 			// activity should be in two-pane mode.
 			mTwoPane = true;
+			fragmentsBuffer = new ArrayList<ArticleListFragment>();
 
 			// In two-pane mode, list items should be given the
 			// 'activated' state when touched.
-			((ArticleListFragment) getFragmentManager().findFragmentById(
-					R.id.article_list)).setActivateOnItemClick(true);
+			((ArticleListFragment) getFragmentManager().findFragmentById(R.id.article_list)).setActivateOnItemClick(true);
 		}
 
 		// TODO: If exposing deep links into your app, handle intents here.
@@ -64,8 +58,7 @@ public class ArticleListActivity extends Activity implements
 			arguments.putString(ArticleDetailFragment.ARG_ITEM_ID, id);
 			ArticleDetailFragment fragment = new ArticleDetailFragment();
 			fragment.setArguments(arguments);
-			getFragmentManager().beginTransaction()
-					.replace(R.id.article_detail_container, fragment).commit();
+			getFragmentManager().beginTransaction().replace(R.id.article_detail_container, fragment).commit();
 
 		} else {
 			// In single-pane mode, simply start the detail activity

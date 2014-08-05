@@ -1,4 +1,4 @@
-package br.com.leofarage.clk.challenge;
+package br.com.leofarage.ckl.challenge.fragments;
 
 import android.os.Bundle;
 import android.app.Fragment;
@@ -7,7 +7,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import br.com.leofarage.clk.challenge.dummy.DummyContent;
+import br.com.leofarage.ckl.challenge.activities.ArticleDetailActivity;
+import br.com.leofarage.ckl.challenge.activities.ArticleListActivity;
+import br.com.leofarage.ckl.challenge.dummy.DummyContent;
+import br.com.leofarage.clk.challenge.R;
 
 /**
  * A fragment representing a single Article detail screen. This fragment is
@@ -59,5 +62,10 @@ public class ArticleDetailFragment extends Fragment {
 		}
 
 		return rootView;
+	}
+	
+	//TODO: change to long for retrieving the article's ID
+	public long getFragmentId(){
+		return 0;
 	}
 }
