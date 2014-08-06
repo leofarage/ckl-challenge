@@ -1,10 +1,32 @@
-<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/article_detail"
-    style="?android:attr/textAppearanceLarge"
+    android:id="@+id/wrap_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp"
-    android:textIsSelectable="true"
-    tools:context="br.com.leofarage.ckl.challenge.ArticleDetailFragment" />
+    android:padding="10dp"
+    android:background="@color/article_detail_background" >
 
+    <TextView
+        android:id="@+id/article_detail"
+        style="?android:attr/textAppearanceLarge"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="16dp"
+        android:textIsSelectable="true"
+        android:layout_marginBottom="10dp"
+        android:textColor="@color/text_color"
+        android:textSize="24dp"
+        tools:context="br.com.leofarage.ckl.challenge.ArticleDetailFragment" />
+    
+    <TextView 
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/article_detail"
+        android:layout_alignParentLeft="true"
+        android:textColor="@color/text_color"
+        android:textSize="12dp"
+        android:text="Date: 08/06/2014"/>
+
+</RelativeLayout>

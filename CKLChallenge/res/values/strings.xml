@@ -3,5 +3,7 @@
 
     <string name="app_name">CLK Challenge</string>
     <string name="title_article_detail">Article Detail</string>
+    
+    <string name="article_detail_date">Date: %1$s</string>
 
 </resources>

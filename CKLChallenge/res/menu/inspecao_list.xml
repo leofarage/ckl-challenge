@@ -7,11 +7,5 @@
         android:orderInCategory="100"
         android:showAsAction="always"
         android:title="Download new articles"/>
-    
-    <item
-        android:id="@+id/action_send"
-        android:orderInCategory="100"
-        android:showAsAction="always"
-        android:title="Enviar Inspeções"/>
 
 </menu>

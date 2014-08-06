@@ -1,15 +1,26 @@
 package br.com.leofarage.ckl.challenge.fragments;
 
+import java.util.List;
+
+import retrofit.Callback;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
 import android.app.Activity;
 import android.os.Bundle;
 import android.app.ListFragment;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import br.com.leofarage.ckl.challenge.database.DAO.Article;
 import br.com.leofarage.ckl.challenge.dummy.DummyContent;
+import br.com.leofarage.ckl.challenge.fragments.adapters.ArticleAdapter;
+import br.com.leofarage.ckl.challenge.json.JSONRequest;
+import br.com.leofarage.ckl.challenge.json.models.ArticleJSON;
+import br.com.leofarage.clk.challenge.R;
 
 /**
 
@@ -55,6 +66,8 @@ public class ArticleListFragment extends ListFragment {
 		}
 	};
 
+	private ArticleAdapter adapter;
+
 	/**
 	 * Mandatory empty constructor for the fragment manager to instantiate the
 	 * fragment (e.g. upon screen orientation changes).
@@ -66,12 +79,15 @@ public class ArticleListFragment extends ListFragment {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		// TODO: replace with a real list adapter.
-		setListAdapter(new ArrayAdapter<DummyContent.DummyItem>(getActivity(),
-				android.R.layout.simple_list_item_activated_1,
-				android.R.id.text1, DummyContent.ITEMS));
-		
+		adapter = new ArticleAdapter(getActivity());
+		setListAdapter(adapter);
 		setHasOptionsMenu(true);
+	}
+	
+	@Override
+	public void onResume() {
+		getListView().setBackgroundResource(R.color.article_list_background);
+		super.onResume();
 	}
 
 	@Override
@@ -85,7 +101,7 @@ public class ArticleListFragment extends ListFragment {
 					.getInt(STATE_ACTIVATED_POSITION));
 		}
 	}
-
+	
 	@Override
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
@@ -101,12 +117,39 @@ public class ArticleListFragment extends ListFragment {
 	@Override
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 		super.onCreateOptionsMenu(menu, inflater);
+		inflater.inflate(R.menu.inspecao_list, menu);
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case R.id.action_sync:
+			System.out.println("OptionsItemSelected");
+			JSONRequest jsonRequest = new JSONRequest();
+			jsonRequest.getArticles(new Callback<List<ArticleJSON>>() {
+				
+				@Override
+				public void success(List<ArticleJSON> arg0, Response arg1) {
+					
+				}
+				
+				@Override
+				public void failure(RetrofitError arg0) {
+					System.out.println("Failure");
+					
+				}
+			});
+			return true;
+
+		default:
+			break;
+		}
+		return super.onOptionsItemSelected(item);
 	}
 	
 	@Override
 	public void onDetach() {
 		super.onDetach();
-
 		// Reset the active callbacks interface to the dummy implementation.
 		mCallbacks = sDummyCallbacks;
 	}
@@ -130,6 +173,10 @@ public class ArticleListFragment extends ListFragment {
 		}
 	}
 
+	public void setContent(List<Article> articles){
+		((ArticleAdapter)getListAdapter()).setData(articles);
+	}
+	
 	/**
 	 * Turns on activate-on-click mode. When this mode is on, list items will be
 	 * given the 'activated' state when touched.
@@ -137,9 +184,7 @@ public class ArticleListFragment extends ListFragment {
 	public void setActivateOnItemClick(boolean activateOnItemClick) {
 		// When setting CHOICE_MODE_SINGLE, ListView will automatically
 		// give items the 'activated' state when touched.
-		getListView().setChoiceMode(
-				activateOnItemClick ? ListView.CHOICE_MODE_SINGLE
-						: ListView.CHOICE_MODE_NONE);
+		getListView().setChoiceMode(activateOnItemClick ? ListView.CHOICE_MODE_SINGLE : ListView.CHOICE_MODE_NONE);
 	}
 
 	private void setActivatedPosition(int position) {

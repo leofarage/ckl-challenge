@@ -1,5 +1,7 @@
 package br.com.leofarage.ckl.challenge.json;
 
+import java.util.List;
+
 import retrofit.Callback;
 import retrofit.RestAdapter;
 import retrofit.RestAdapter.LogLevel;
@@ -8,7 +10,7 @@ import br.com.leofarage.ckl.challenge.json.models.ArticleJSON;
 
 public class JSONRequest {
 
-	private static final String END_POINT = "http://anvisadev.incod.ufsc.br";
+	private static final String END_POINT = "http://ckl.io";
 	private String customIp;
 	private String customPort;
 
@@ -16,7 +18,7 @@ public class JSONRequest {
 		
 	}
 	
-	public void getArticles(Callback<ArticleJSON> callback){
+	public void getArticles(Callback<List<ArticleJSON>> callback){
 		Request request = getRequest();
 		request.getArticles(callback);
 	}

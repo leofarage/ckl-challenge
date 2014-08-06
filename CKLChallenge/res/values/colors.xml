@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="article_item_selected">#33b5e5</color>
+    <color name="article_list_background">#464646</color>
+    <color name="text_color">#f2fafd</color>
+    <color name="article_detail_background">#0099cc</color>
+</resources>
