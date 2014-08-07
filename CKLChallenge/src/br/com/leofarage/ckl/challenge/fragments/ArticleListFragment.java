@@ -6,18 +6,17 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 import android.app.Activity;
-import android.os.Bundle;
 import android.app.ListFragment;
+import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
-
+import br.com.leofarage.ckl.challenge.database.CKLDaoSession;
 import br.com.leofarage.ckl.challenge.database.DAO.Article;
-import br.com.leofarage.ckl.challenge.dummy.DummyContent;
 import br.com.leofarage.ckl.challenge.fragments.adapters.ArticleAdapter;
+import br.com.leofarage.ckl.challenge.json.Converter;
 import br.com.leofarage.ckl.challenge.json.JSONRequest;
 import br.com.leofarage.ckl.challenge.json.models.ArticleJSON;
 import br.com.leofarage.clk.challenge.R;
@@ -37,7 +36,7 @@ public class ArticleListFragment extends ListFragment {
 	 * The fragment's current callback object, which is notified of list item
 	 * clicks.
 	 */
-	private Callbacks mCallbacks = sDummyCallbacks;
+	private Callbacks mCallbacks;
 
 	/**
 	 * The current activated item position. Only used on tablets.
@@ -53,18 +52,13 @@ public class ArticleListFragment extends ListFragment {
 		/**
 		 * Callback for when an item has been selected.
 		 */
-		public void onItemSelected(String id);
+		public void onItemSelected(long id);
 	}
 
 	/**
 	 * A dummy implementation of the {@link Callbacks} interface that does
 	 * nothing. Used only when this fragment is not attached to an activity.
 	 */
-	private static Callbacks sDummyCallbacks = new Callbacks() {
-		@Override
-		public void onItemSelected(String id) {
-		}
-	};
 
 	private ArticleAdapter adapter;
 
@@ -87,6 +81,7 @@ public class ArticleListFragment extends ListFragment {
 	@Override
 	public void onResume() {
 		getListView().setBackgroundResource(R.color.article_list_background);
+		setContent((new CKLDaoSession(getActivity())).getAllArticles());
 		super.onResume();
 	}
 
@@ -130,13 +125,16 @@ public class ArticleListFragment extends ListFragment {
 				
 				@Override
 				public void success(List<ArticleJSON> arg0, Response arg1) {
-					
+					Converter converter = new Converter();
+					CKLDaoSession cklDaoSession = new CKLDaoSession(getActivity());
+					List<Article> convertListOfJSON = converter.convertListOfJSON(arg0);
+					cklDaoSession.insertArticleList(convertListOfJSON);
+					setContent(cklDaoSession.getAllArticles());
 				}
 				
 				@Override
 				public void failure(RetrofitError arg0) {
 					System.out.println("Failure");
-					
 				}
 			});
 			return true;
@@ -151,7 +149,7 @@ public class ArticleListFragment extends ListFragment {
 	public void onDetach() {
 		super.onDetach();
 		// Reset the active callbacks interface to the dummy implementation.
-		mCallbacks = sDummyCallbacks;
+		mCallbacks = null;
 	}
 
 	@Override
@@ -161,7 +159,8 @@ public class ArticleListFragment extends ListFragment {
 
 		// Notify the active callbacks interface (the activity, if the
 		// fragment is attached to one) that an item has been selected.
-		mCallbacks.onItemSelected(DummyContent.ITEMS.get(position).id);
+		if(mCallbacks != null)
+			mCallbacks.onItemSelected(adapter.getItem(position).getId());
 	}
 
 	@Override
@@ -174,7 +173,9 @@ public class ArticleListFragment extends ListFragment {
 	}
 
 	public void setContent(List<Article> articles){
-		((ArticleAdapter)getListAdapter()).setData(articles);
+		if(adapter != null){
+			adapter.setData(articles);
+		}
 	}
 	
 	/**

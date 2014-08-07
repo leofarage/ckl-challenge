@@ -1,7 +1,9 @@
 package br.com.leofarage.ckl.challenge.activities;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import br.com.leofarage.ckl.challenge.fragments.ArticleDetailFragment;
 import br.com.leofarage.ckl.challenge.fragments.ArticleListFragment;
@@ -9,6 +11,7 @@ import br.com.leofarage.ckl.challenge.fragments.ArticleListFragment.Callbacks;
 import br.com.leofarage.clk.challenge.R;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.util.LongSparseArray;
 import android.app.Activity;
 
 /**
@@ -21,7 +24,7 @@ public class ArticleListActivity extends Activity implements ArticleListFragment
 	 * device.
 	 */
 	private boolean mTwoPane;
-	private List<ArticleListFragment> fragmentsBuffer;
+	private LongSparseArray<ArticleDetailFragment> fragmentsBuffer;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -34,7 +37,7 @@ public class ArticleListActivity extends Activity implements ArticleListFragment
 			// res/values-sw600dp). If this view is present, then the
 			// activity should be in two-pane mode.
 			mTwoPane = true;
-			fragmentsBuffer = new ArrayList<ArticleListFragment>();
+			fragmentsBuffer = new LongSparseArray<ArticleDetailFragment>();
 
 			// In two-pane mode, list items should be given the
 			// 'activated' state when touched.
@@ -49,15 +52,20 @@ public class ArticleListActivity extends Activity implements ArticleListFragment
 	 * that the item with the given ID was selected.
 	 */
 	@Override
-	public void onItemSelected(String id) {
+	public void onItemSelected(long id) {
 		if (mTwoPane) {
 			// In two-pane mode, show the detail view in this activity by
 			// adding or replacing the detail fragment using a
 			// fragment transaction.
-			Bundle arguments = new Bundle();
-			arguments.putString(ArticleDetailFragment.ARG_ITEM_ID, id);
-			ArticleDetailFragment fragment = new ArticleDetailFragment();
-			fragment.setArguments(arguments);
+			ArticleDetailFragment fragment;
+			if(!(fragmentsBuffer.indexOfKey(id) > 0)){
+				Bundle arguments = new Bundle();
+				arguments.putLong(ArticleDetailFragment.ARG_ITEM_ID, id);
+				fragment = new ArticleDetailFragment();
+				fragment.setArguments(arguments);
+			}else{
+				fragment = fragmentsBuffer.get(id);
+			}
 			getFragmentManager().beginTransaction().replace(R.id.article_detail_container, fragment).commit();
 
 		} else {

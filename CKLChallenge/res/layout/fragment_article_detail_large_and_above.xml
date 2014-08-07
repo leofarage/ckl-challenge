@@ -1,0 +1,62 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/wrap_container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/article_detail_background"
+    android:orientation="vertical"
+    android:padding="10dp" >
+
+    <TextView
+        android:id="@+id/article_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:text="Date: 08/06/2014"
+        android:textColor="@color/text_color"
+        android:textSize="12sp" />
+
+    <TextView
+        android:id="@+id/article_title"
+        style="?android:attr/textAppearanceLarge"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"
+        android:background="@drawable/article_detail_title_background"
+        android:gravity="center"
+        android:padding="16dp"
+        android:textColor="@color/text_color_dark"
+        android:textIsSelectable="true"
+        android:textSize="24sp"
+        tools:context="br.com.leofarage.ckl.challenge.ArticleDetailFragment" />
+
+    <ScrollView
+        android:id="@+id/scrollview"
+        android:layout_width="match_parent"
+        android:layout_height="0dip"
+        android:layout_marginBottom="10dp"
+        android:layout_weight="1" >
+
+        <TextView
+            android:id="@+id/article_content"
+            style="?android:attr/textAppearanceMedium"
+            android:layout_width="match_parent"
+            android:layout_height="0dip"
+            android:text="@string/article_content_lorem"
+            android:textColor="@color/text_color"
+            android:textIsSelectable="true"
+            android:textSize="18sp" />
+    </ScrollView>
+
+    <TextView
+        android:id="@+id/article_website_authors"
+        style="?android:attr/textAppearanceMedium"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="left"
+        android:textColor="@color/text_color"
+        android:textIsSelectable="true"
+        android:textStyle="bold"
+        android:textSize="14sp" />
+
+</LinearLayout>

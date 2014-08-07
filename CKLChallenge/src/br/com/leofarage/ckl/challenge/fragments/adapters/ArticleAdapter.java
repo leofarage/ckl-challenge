@@ -28,14 +28,12 @@ public class ArticleAdapter extends BaseAdapter {
 
 	@Override
 	public Article getItem(int position) {
-		return (data != null && data.size() > position) ? data.get(position)
-				: null;
+		return (data != null && data.size() > position) ? data.get(position) : null;
 	}
 
 	@Override
 	public long getItemId(int position) {
-		return (data != null && data.size() > position) ? data.get(position)
-				.getId() : -1;
+		return (data != null && data.size() > position) ? data.get(position).getId() : -1;
 	}
 
 	@Override
@@ -53,8 +51,16 @@ public class ArticleAdapter extends BaseAdapter {
 	}
 	
 	public void setData(List<Article> data){
+		clearAdapter();
 		this.data = data;
 		notifyDataSetChanged();
+	}
+	
+	/**
+	 * Must call notifyDataSetChanged() for it to have any effect over the presented data
+	 * */
+	private void clearAdapter(){
+		this.data = null;
 	}
 
 }
