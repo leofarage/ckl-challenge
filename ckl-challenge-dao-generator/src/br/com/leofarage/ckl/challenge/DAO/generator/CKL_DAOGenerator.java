@@ -3,6 +3,7 @@ import java.io.IOException;
 
 import de.greenrobot.daogenerator.DaoGenerator;
 import de.greenrobot.daogenerator.Entity;
+import de.greenrobot.daogenerator.Index;
 import de.greenrobot.daogenerator.Property;
 import de.greenrobot.daogenerator.Schema;
 
@@ -20,7 +21,6 @@ import de.greenrobot.daogenerator.Schema;
 public class CKL_DAOGenerator {
 
 	private static Entity article;
-	private static Entity authors;
 
 	public static void main(String[] args) {
 		
@@ -28,10 +28,15 @@ public class CKL_DAOGenerator {
 		
 		article = schema.addEntity("Article");
 			article.addIdProperty();
-			article.addStringProperty("website");
-			article.addStringProperty("title");
-			article.addDateProperty("date");
-			article.addStringProperty("authors");
+			Property webSiteProperty = article.addStringProperty("website").unique().notNull().getProperty();
+			Property titleProperty = article.addStringProperty("title").unique().notNull().getProperty();
+			article.addDateProperty("date").notNull();
+			Property authorsProperty = article.addStringProperty("authors").unique().notNull().getProperty();
+			Index index = new Index();
+			index.addProperty(authorsProperty);
+			index.addProperty(titleProperty);
+			index.addProperty(webSiteProperty);
+			article.addIndex(index);
 		
 		extracted(schema);
 		

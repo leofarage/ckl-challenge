@@ -20,7 +20,7 @@ public class CKLDaoSession{
 	
 	private DaoSession getDaoSession() {
 		if (this.daoSession == null) {
-			DevOpenHelper helper = new DaoMaster.DevOpenHelper(context, "hemoterapia-db", null);
+			DevOpenHelper helper = new DaoMaster.DevOpenHelper(context, "ckl-challenge.db", null);
 			SQLiteDatabase db = helper.getWritableDatabase();
 			DaoMaster daoMaster = new DaoMaster(db);
 			daoSession = daoMaster.newSession();

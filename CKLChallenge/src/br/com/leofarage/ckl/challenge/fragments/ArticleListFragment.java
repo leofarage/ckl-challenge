@@ -8,11 +8,17 @@ import retrofit.client.Response;
 import android.app.Activity;
 import android.app.ListFragment;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.TextView.OnEditorActionListener;
 import br.com.leofarage.ckl.challenge.database.CKLDaoSession;
 import br.com.leofarage.ckl.challenge.database.DAO.Article;
 import br.com.leofarage.ckl.challenge.fragments.adapters.ArticleAdapter;
@@ -112,7 +118,30 @@ public class ArticleListFragment extends ListFragment {
 	@Override
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 		super.onCreateOptionsMenu(menu, inflater);
-		inflater.inflate(R.menu.inspecao_list, menu);
+		inflater.inflate(R.menu.article_list, menu);
+		
+		View searchMenuItem = menu.findItem(R.id.search).getActionView();
+		EditText editText = (EditText) searchMenuItem.findViewById(R.id.article_filter_edittext);
+		editText.addTextChangedListener(new TextWatcher() {
+			
+			@Override
+			public void onTextChanged(CharSequence s, int start, int before, int count) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void beforeTextChanged(CharSequence s, int start, int count,
+					int after) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void afterTextChanged(Editable s) {
+				adapter.getFilter().filter(s.toString());
+			}
+		});
 	}
 	
 	@Override

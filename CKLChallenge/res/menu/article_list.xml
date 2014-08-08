@@ -3,6 +3,12 @@
     tools:context="br.ufsc.incod.anvisa.hemoterapia.guia.mobile.LoginActivity" >
 
     <item
+        android:id="@+id/search"
+        android:actionLayout="@layout/article_list_filter"
+        android:orderInCategory="99"
+        android:showAsAction="ifRoom|collapseActionView"
+        android:title="Search"/>
+    <item
         android:id="@+id/action_sync"
         android:orderInCategory="100"
         android:showAsAction="always"

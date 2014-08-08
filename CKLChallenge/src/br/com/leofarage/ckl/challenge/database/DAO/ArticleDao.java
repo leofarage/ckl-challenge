@@ -44,10 +44,13 @@ public class ArticleDao extends AbstractDao<Article, Long> {
         String constraint = ifNotExists? "IF NOT EXISTS ": "";
         db.execSQL("CREATE TABLE " + constraint + "'ARTICLE' (" + //
                 "'_id' INTEGER PRIMARY KEY ," + // 0: id
-                "'WEBSITE' TEXT," + // 1: website
-                "'TITLE' TEXT," + // 2: title
-                "'DATE' INTEGER," + // 3: date
-                "'AUTHORS' TEXT);"); // 4: authors
+                "'WEBSITE' TEXT NOT NULL UNIQUE ," + // 1: website
+                "'TITLE' TEXT NOT NULL UNIQUE ," + // 2: title
+                "'DATE' INTEGER NOT NULL ," + // 3: date
+                "'AUTHORS' TEXT NOT NULL UNIQUE );"); // 4: authors
+        // Add Indexes
+        db.execSQL("CREATE INDEX " + constraint + "IDX_ARTICLE_AUTHORS_TITLE_WEBSITE ON ARTICLE" +
+                " (AUTHORS,TITLE,WEBSITE);");
     }
 
     /** Drops the underlying database table. */
@@ -65,26 +68,10 @@ public class ArticleDao extends AbstractDao<Article, Long> {
         if (id != null) {
             stmt.bindLong(1, id);
         }
- 
-        String website = entity.getWebsite();
-        if (website != null) {
-            stmt.bindString(2, website);
-        }
- 
-        String title = entity.getTitle();
-        if (title != null) {
-            stmt.bindString(3, title);
-        }
- 
-        java.util.Date date = entity.getDate();
-        if (date != null) {
-            stmt.bindLong(4, date.getTime());
-        }
- 
-        String authors = entity.getAuthors();
-        if (authors != null) {
-            stmt.bindString(5, authors);
-        }
+        stmt.bindString(2, entity.getWebsite());
+        stmt.bindString(3, entity.getTitle());
+        stmt.bindLong(4, entity.getDate().getTime());
+        stmt.bindString(5, entity.getAuthors());
     }
 
     /** @inheritdoc */
@@ -98,10 +85,10 @@ public class ArticleDao extends AbstractDao<Article, Long> {
     public Article readEntity(Cursor cursor, int offset) {
         Article entity = new Article( //
             cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0), // id
-            cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1), // website
-            cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2), // title
-            cursor.isNull(offset + 3) ? null : new java.util.Date(cursor.getLong(offset + 3)), // date
-            cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4) // authors
+            cursor.getString(offset + 1), // website
+            cursor.getString(offset + 2), // title
+            new java.util.Date(cursor.getLong(offset + 3)), // date
+            cursor.getString(offset + 4) // authors
         );
         return entity;
     }
@@ -110,10 +97,10 @@ public class ArticleDao extends AbstractDao<Article, Long> {
     @Override
     public void readEntity(Cursor cursor, Article entity, int offset) {
         entity.setId(cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0));
-        entity.setWebsite(cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1));
-        entity.setTitle(cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2));
-        entity.setDate(cursor.isNull(offset + 3) ? null : new java.util.Date(cursor.getLong(offset + 3)));
-        entity.setAuthors(cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4));
+        entity.setWebsite(cursor.getString(offset + 1));
+        entity.setTitle(cursor.getString(offset + 2));
+        entity.setDate(new java.util.Date(cursor.getLong(offset + 3)));
+        entity.setAuthors(cursor.getString(offset + 4));
      }
     
     /** @inheritdoc */
