@@ -8,6 +8,7 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import br.com.leofarage.ckl.challenge.database.DAO.Article;
 import br.com.leofarage.ckl.challenge.database.DAO.ArticleDao;
+import br.com.leofarage.ckl.challenge.database.DAO.ArticleDao.Properties;
 import br.com.leofarage.ckl.challenge.database.DAO.DaoMaster;
 import br.com.leofarage.ckl.challenge.database.DAO.DaoMaster.DevOpenHelper;
 import br.com.leofarage.ckl.challenge.database.DAO.DaoSession;
@@ -32,7 +33,14 @@ public class CKLDaoSession{
 	
 	public void insertArticleList(List<Article> articles){
 		ArticleDao articleDao = getDaoSession().getArticleDao();
-		articleDao.insertOrReplaceInTx(articles);
+		long containedId;
+		for (Article article : articles) {
+			if((containedId = containsArticle(article)) >= 0){
+				article.setId(containedId);
+				articleDao.update(article);
+			}else
+				articleDao.insert(article);
+		}
 	}
 	
 	public List<Article> getAllArticles(){
@@ -51,5 +59,14 @@ public class CKLDaoSession{
 	public Article getArticle(long id){
 		ArticleDao articleDao = getDaoSession().getArticleDao();
 		return articleDao.queryBuilder().where(ArticleDao.Properties.Id.eq(id)).unique();
+	}
+	
+	private long containsArticle(Article article){
+		ArticleDao articleDao = getDaoSession().getArticleDao();
+		Article unique = articleDao.queryBuilder().where(Properties.Authors.eq(article.getAuthors()), Properties.Title.eq(article.getTitle()), Properties.Website.eq(article.getWebsite())).unique();
+		if(unique != null)
+			return unique.getId();
+		else
+			return -1;
 	}
 }
