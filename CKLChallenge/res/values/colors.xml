@@ -6,4 +6,6 @@
     <color name="text_color_dark">#464646</color>
     <color name="article_detail_background">#0099cc</color>
     <color name="article_title_background_stroke">#0091c8</color>
+    
+    <color name="article_list_button_grid_divider">#6f6f6f</color>
 </resources>

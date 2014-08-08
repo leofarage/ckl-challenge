@@ -5,13 +5,21 @@
     <item
         android:id="@+id/search"
         android:actionLayout="@layout/article_list_filter"
-        android:orderInCategory="99"
+        android:orderInCategory="98"
         android:showAsAction="ifRoom|collapseActionView"
         android:title="Search"/>
+    
+    <item
+        android:id="@+id/reorder"
+        android:orderInCategory="99"
+        android:showAsAction="ifRoom"
+        android:title="Reorder data" />
+        
+    
     <item
         android:id="@+id/action_sync"
         android:orderInCategory="100"
-        android:showAsAction="always"
+        android:showAsAction="ifRoom"
         android:title="Download new articles"/>
 
 </menu>

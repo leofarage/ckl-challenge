@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="15dp" >
+
+    <Spinner
+        android:id="@+id/reorder_spinner"
+        style="@android:style/Widget.Holo.Spinner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:layout_margin="15dp"
+        android:background="@drawable/section_divider" />
+
+    <RadioGroup
+        android:id="@+id/reorder_radiogroup"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingLeft="15dp" >
+
+        <RadioButton
+            android:id="@+id/reorder_asc_rbutton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="ASC"
+            android:layout_marginRight="15dp"
+            android:textSize="16dp" />
+        
+        <RadioButton
+            android:id="@+id/reorder_desc_rbutton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="DESC"
+            android:textSize="16dp" />
+    </RadioGroup>
+    
+    <Space 
+        android:layout_width="match_parent"
+        android:layout_height="35dp"/>
+    
+    <LinearLayout 
+        android:layout_width="match_parent"
+        android:layout_height="64dp">
+        
+        <Button 
+            android:id="@+id/reorder_cancel_button"
+            android:layout_width="0dip"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="Cancel"/>
+        <Space 
+            android:layout_width="3dp"
+            android:layout_height="match_parent"/>
+        <Button 
+            android:id="@+id/reorder_ok_button"
+            android:layout_width="0dip"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:enabled="false"
+            android:text="OK"/>
+        
+    </LinearLayout>
+
+</LinearLayout>

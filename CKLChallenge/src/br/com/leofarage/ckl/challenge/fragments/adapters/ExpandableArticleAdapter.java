@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import de.greenrobot.dao.Property;
+
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,6 +16,7 @@ import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.TextView;
 import br.com.leofarage.ckl.challenge.database.DAO.Article;
+import br.com.leofarage.ckl.challenge.database.DAO.ArticleDao;
 import br.com.leofarage.clk.challenge.R;
 
 public class ExpandableArticleAdapter extends BaseExpandableListAdapter implements Filterable{
@@ -28,6 +31,8 @@ public class ExpandableArticleAdapter extends BaseExpandableListAdapter implemen
 	private Context context;
 	private ArticleFilter articleFilter;
 	private boolean isDataFiltered = false;
+	
+	private Property property;
 	
 	public ExpandableArticleAdapter(Context context) {
 		this.context = context;
@@ -111,7 +116,7 @@ public class ExpandableArticleAdapter extends BaseExpandableListAdapter implemen
 
 	@Override
 	public boolean isChildSelectable(int groupPosition, int childPosition) {
-		return false;
+		return true;
 	}
 
 	@Override
@@ -130,6 +135,10 @@ public class ExpandableArticleAdapter extends BaseExpandableListAdapter implemen
 		return articleFilter;
 	}
 	
+	public void setOrderByProperty(Property property){
+		this.property = property;
+	}
+	
 	public void setData(List<Article> articles){
 		this.data = articles;
 		notifyDataSetChanged();
@@ -139,13 +148,29 @@ public class ExpandableArticleAdapter extends BaseExpandableListAdapter implemen
 		groups.clear();
 		groupsKey.clear();
 		for (Article article : articles) {
-			String groupKey = article.getWebsite();
+			String groupKey = getGroupKeyByProperty(property, article);
 			if(!groups.containsKey(groupKey)){
 				groups.put(groupKey, new ArrayList<Article>());
 				groupsKey.add(groupKey);
 			}
 			groups.get(groupKey).add(article);
 		}
+	}
+	
+	private String getGroupKeyByProperty(Property property, Article article){
+		if(property != null){
+			switch (property.columnName.toUpperCase()) {
+			case "AUTHORS":
+				return ""+article.getAuthors().charAt(0);
+			case "TITLE":
+				return ""+article.getTitle().charAt(0);
+			case "DATE":
+				return article.getDate().toString();
+			default:
+				return article.getWebsite();
+			}
+		}
+		return article.getWebsite();
 	}
 
 	private class ArticleFilter extends Filter{

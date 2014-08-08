@@ -2,26 +2,34 @@ package br.com.leofarage.ckl.challenge.fragments;
 
 import java.util.List;
 
+import de.greenrobot.dao.Property;
+
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 import android.app.Activity;
-import android.app.ListFragment;
+import android.app.Fragment;
+import android.app.FragmentManager;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.ExpandableListView;
+import android.widget.ExpandableListView.OnChildClickListener;
 import android.widget.ListView;
-import android.widget.TextView;
-import android.widget.TextView.OnEditorActionListener;
 import br.com.leofarage.ckl.challenge.database.CKLDaoSession;
 import br.com.leofarage.ckl.challenge.database.DAO.Article;
 import br.com.leofarage.ckl.challenge.fragments.adapters.ArticleAdapter;
+import br.com.leofarage.ckl.challenge.fragments.adapters.ExpandableArticleAdapter;
+import br.com.leofarage.ckl.challenge.fragments.dialogs.ReorderingDialog;
+import br.com.leofarage.ckl.challenge.fragments.dialogs.ReorderingDialog.ReorderListListener;
 import br.com.leofarage.ckl.challenge.json.Converter;
 import br.com.leofarage.ckl.challenge.json.JSONRequest;
 import br.com.leofarage.ckl.challenge.json.models.ArticleJSON;
@@ -30,13 +38,14 @@ import br.com.leofarage.clk.challenge.R;
 /**
 
  */
-public class ArticleListFragment extends ListFragment {
+public class ArticleListFragment extends Fragment implements OnChildClickListener, ReorderListListener{
 
 	/**
 	 * The serialization (saved instance state) Bundle key representing the
 	 * activated item position. Only used on tablets.
 	 */
-	private static final String STATE_ACTIVATED_POSITION = "activated_position";
+	private static final String STATE_ACTIVATED_CHILD = "activated_position";
+	private static final String STATE_ACTIVATED_GROUP = "activated_group";
 
 	/**
 	 * The fragment's current callback object, which is notified of list item
@@ -67,6 +76,9 @@ public class ArticleListFragment extends ListFragment {
 	 */
 
 	private ArticleAdapter adapter;
+	private ExpandableArticleAdapter expandableAdapter;
+
+	private ExpandableListView expandableListView;
 
 	/**
 	 * Mandatory empty constructor for the fragment manager to instantiate the
@@ -78,15 +90,23 @@ public class ArticleListFragment extends ListFragment {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
-		adapter = new ArticleAdapter(getActivity());
-		setListAdapter(adapter);
 		setHasOptionsMenu(true);
 	}
 	
 	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+		View view = inflater.inflate(R.layout.fragment_article_list, null);
+		expandableListView = (ExpandableListView) view.findViewById(R.id.expandable_listview);
+		expandableAdapter = new ExpandableArticleAdapter(getActivity());
+		expandableListView.setAdapter(expandableAdapter);
+		expandableListView.setOnChildClickListener(this);
+		expandableListView.setChoiceMode(ExpandableListView.CHOICE_MODE_SINGLE); 
+		return view;
+	}
+	
+	@Override
 	public void onResume() {
-		getListView().setBackgroundResource(R.color.article_list_background);
+		expandableListView.setBackgroundResource(R.color.article_list_background);
 		setContent((new CKLDaoSession(getActivity())).getAllArticles());
 		super.onResume();
 	}
@@ -97,9 +117,9 @@ public class ArticleListFragment extends ListFragment {
 
 		// Restore the previously serialized activated item position.
 		if (savedInstanceState != null
-				&& savedInstanceState.containsKey(STATE_ACTIVATED_POSITION)) {
+				&& savedInstanceState.containsKey(STATE_ACTIVATED_CHILD)) {
 			setActivatedPosition(savedInstanceState
-					.getInt(STATE_ACTIVATED_POSITION));
+					.getInt(STATE_ACTIVATED_CHILD));
 		}
 	}
 	
@@ -139,7 +159,7 @@ public class ArticleListFragment extends ListFragment {
 			
 			@Override
 			public void afterTextChanged(Editable s) {
-				adapter.getFilter().filter(s.toString());
+				expandableAdapter.getFilter().filter(s.toString());
 			}
 		});
 	}
@@ -167,11 +187,21 @@ public class ArticleListFragment extends ListFragment {
 				}
 			});
 			return true;
-
+		case R.id.reorder:
+			FragmentManager fm = getActivity().getFragmentManager();
+			ReorderingDialog reorderingDialog = new ReorderingDialog();
+			reorderingDialog.setReorderListListener(this);
+			reorderingDialog.show(fm, "ReorderDialog");
 		default:
 			break;
 		}
 		return super.onOptionsItemSelected(item);
+	}
+
+	@Override
+	public void onReordering(Property property, boolean asc) {
+		CKLDaoSession cklDaoSession = new CKLDaoSession(getActivity());
+		setOrderedContent(cklDaoSession.getAllArticlesOrderedBy(property, asc), property);
 	}
 	
 	@Override
@@ -181,7 +211,7 @@ public class ArticleListFragment extends ListFragment {
 		mCallbacks = null;
 	}
 
-	@Override
+	/*@Override
 	public void onListItemClick(ListView listView, View view, int position,
 			long id) {
 		super.onListItemClick(listView, view, position, id);
@@ -190,21 +220,47 @@ public class ArticleListFragment extends ListFragment {
 		// fragment is attached to one) that an item has been selected.
 		if(mCallbacks != null)
 			mCallbacks.onItemSelected(adapter.getItem(position).getId());
+	}*/
+	
+	@Override
+	public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
+		System.out.println("ChildClicked!");
+		v.setActivated(true);
+		if(mCallbacks != null){
+			mCallbacks.onItemSelected(expandableAdapter.getChildId(groupPosition, childPosition));
+		}
+		return false;
 	}
 
 	@Override
 	public void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
-		if (mActivatedPosition != ListView.INVALID_POSITION) {
+		if (mActivatedPosition != ExpandableListView.INVALID_POSITION) {
 			// Serialize and persist the activated item position.
-			outState.putInt(STATE_ACTIVATED_POSITION, mActivatedPosition);
+			outState.putInt(STATE_ACTIVATED_CHILD, mActivatedPosition);
 		}
 	}
 
 	public void setContent(List<Article> articles){
-		if(adapter != null){
-			adapter.setData(articles);
+		if(expandableAdapter != null){
+			expandableAdapter.setOrderByProperty(null);
+			expandableAdapter.setData(articles);
+			expandAllGroups();
 		}
+	}
+	
+	public void setOrderedContent(List<Article> articles, Property property){
+		if(expandableAdapter != null){
+			expandableAdapter.setOrderByProperty(property);
+			expandableAdapter.setData(articles);
+			expandAllGroups();
+		}
+	}
+	
+	private void expandAllGroups(){
+		int groupCount = expandableAdapter.getGroupCount();
+		for(int i = 0; i < groupCount; i++)
+			expandableListView.expandGroup(i);
 	}
 	
 	/**
@@ -214,14 +270,14 @@ public class ArticleListFragment extends ListFragment {
 	public void setActivateOnItemClick(boolean activateOnItemClick) {
 		// When setting CHOICE_MODE_SINGLE, ListView will automatically
 		// give items the 'activated' state when touched.
-		getListView().setChoiceMode(activateOnItemClick ? ListView.CHOICE_MODE_SINGLE : ListView.CHOICE_MODE_NONE);
+		expandableListView.setChoiceMode(activateOnItemClick ? ListView.CHOICE_MODE_SINGLE : ListView.CHOICE_MODE_NONE);
 	}
 
 	private void setActivatedPosition(int position) {
-		if (position == ListView.INVALID_POSITION) {
-			getListView().setItemChecked(mActivatedPosition, false);
+		if (position == ExpandableListView.INVALID_POSITION) {
+			expandableListView.setItemChecked(mActivatedPosition, false);
 		} else {
-			getListView().setItemChecked(position, true);
+			expandableListView.setItemChecked(position, true);
 		}
 
 		mActivatedPosition = position;

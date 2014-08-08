@@ -2,6 +2,8 @@ package br.com.leofarage.ckl.challenge.database;
 
 import java.util.List;
 
+import de.greenrobot.dao.Property;
+
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import br.com.leofarage.ckl.challenge.database.DAO.Article;
@@ -35,7 +37,15 @@ public class CKLDaoSession{
 	
 	public List<Article> getAllArticles(){
 		ArticleDao articleDao = getDaoSession().getArticleDao();
-		return articleDao.queryBuilder().list();
+		return articleDao.queryBuilder().orderAsc(ArticleDao.Properties.Website).list();
+	}
+	
+	public List<Article> getAllArticlesOrderedBy(Property property, boolean asc){
+		ArticleDao articleDao = getDaoSession().getArticleDao();
+		if(asc)
+			return articleDao.queryBuilder().orderAsc(property).list();
+		else
+			return articleDao.queryBuilder().orderDesc(property).list();
 	}
 	
 	public Article getArticle(long id){
